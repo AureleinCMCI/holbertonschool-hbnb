@@ -38,10 +38,6 @@ class HBnBFacade:
         user.last_name = user_data.get('last_name', user.last_name)
         user.email = user_data.get('email', user.email)
         
-        # Si tu utilises une base de données ou un autre système de persistance, il te faut enregistrer la modification.
-        # Ici, si tu utilises un stockage en mémoire, la mise à jour est implicite, mais si tu as besoin d'un `commit` dans la BD, tu l'ajoutes ici.
-        
-        # Retourner l'utilisateur mis à jour
         return user
 
 ############################################### ici on gére le crud de amenity################################################################################################
