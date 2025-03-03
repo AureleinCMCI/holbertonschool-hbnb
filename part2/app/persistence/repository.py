@@ -29,7 +29,8 @@ class Repository(ABC):
 class InMemoryRepository(Repository):
     def __init__(self):
         self._storage = {}
-
+        self.data = {}
+        
     def add(self, obj):
         self._storage[obj.id] = obj
 
@@ -63,3 +64,10 @@ class InMemoryRepository(Repository):
         
     def save(self, obj):
         self._storage[obj.id] = obj  # Remplace l'objet existant avec la version mise à jour
+
+    def get_by_place_id(self, place_id):
+        """Récupère un propriétaire via l'ID du lieu"""
+        for owner in self.data.values():
+            if owner.get("place_id") == place_id:
+                return owner
+        return None  

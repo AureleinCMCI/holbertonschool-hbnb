@@ -104,7 +104,6 @@ class PlaceResource(Resource):
             'price': place.price,
             'latitude': place.latitude,
             'longitude': place.longitude,
-            # Si vous avez des informations supplémentaires comme l'owner et les amenities
             'owner_id': place.owner_id,
             'amenities': place.amenities
         }, 200
