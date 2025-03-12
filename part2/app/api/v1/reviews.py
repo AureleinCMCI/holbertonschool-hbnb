@@ -1,6 +1,9 @@
 from flask_restx import Namespace, Resource, fields
 from app.services.facade import HBnBFacade
-
+from flask import request, jsonify
+from app.models.user import User
+from app.models.place import Place
+from app.models.review import Review
 api = Namespace('reviews', description='Review operations')
 facade = HBnBFacade()
 
@@ -16,19 +19,53 @@ class ReviewList(Resource):
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
-        review_data = api.payload
+        """Créer un nouvel avis (review)"""
+        data = request.get_json()
 
-        # Validation des données
-        if not review_data.get('text'):
-            return {'error': 'Text is required'}, 400
+        # Vérifier si la requête contient bien des données
+        if not data:
+            return {"error": "Requête JSON manquante"}, 400
 
-        new_review = facade.create_review(review_data)
-        return {
-            'id': new_review.id,
-            'text': new_review.text,
-            'user_id': new_review.user_id,
-            'place_id': new_review.place_id
-        }, 201
+        # Vérifier que tous les champs nécessaires sont présents
+        required_fields = ["text", "rating", "user_id", "place_id"]
+        missing_fields = [field for field in required_fields if field not in data]
+
+        if missing_fields:
+            return {"error": f"Champs obligatoires manquants: {', '.join(missing_fields)}"}, 400
+
+        # ✅ Vérifier si l'utilisateur existe
+        user = facade.user_repo.get(data["user_id"])
+        if user is None:
+            return {"error": f"Utilisateur avec ID {data['user_id']} introuvable"}, 404
+
+        # ✅ Vérifier si le lieu existe
+        place = facade.place_repo.get(data["place_id"])
+        if place is None:
+            return {"error": f"Lieu avec ID {data['place_id']} introuvable"}, 404
+
+        try:
+            # ✅ Créer et enregistrer le nouvel avis (review)
+            new_review = Review(
+                text=data["text"],
+                rating=data["rating"],
+                user_id=data["user_id"],
+                place_id=data["place_id"]
+            )
+
+            # ✅ Ajouter et sauvegarder l'avis dans le repository
+            facade.review_repo.add(new_review)
+            facade.review_repo.save()  # 🔹 Assure que l'avis est bien stocké
+
+            # ✅ Debugging: Vérifier si l'objet Review est bien stocké
+            print(f"DEBUG: Review ajouté -> {new_review.to_dict()}")
+
+            # ✅ Retourner les données de l'avis sous forme de dictionnaire (sans `jsonify()`)
+            return new_review.to_dict(), 201
+
+        except Exception as e:
+            print(f"ERROR: Erreur lors de la création de l'avis - {str(e)}")
+            return {"error": "Une erreur est survenue lors de la création de l'avis."}, 500
+
 
     def get(self):
         reviews = facade.review_repo.get_all()

@@ -5,36 +5,52 @@ from app.models.place import Place  # ✅ Correct
 
 """ Class that creates reviews """
 
-
 class Review:
-    def __init__(self, text: str, user: User, place: Place, rating: int ,user_id,place_id ):
+    def __init__(self, text: str, rating: int, user=None, user_id=None, place=None, place_id=None):
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
-        self.user_id = user_id  # Ajout de 'user_id'
-        self.place_id = place_id 
-        self.user = user  # Attendre un objet utilisateur
-        self.place = place
-        # ✅ Ensure the text is not empty   
+
+        # ✅ Vérifier et stocker `user_id`
+        if user and isinstance(user, User):
+            self.user = user
+            self.user_id = user.id
+        elif user_id:
+            self.user = None
+            self.user_id = user_id
+        else:
+            raise ValueError("Un `user` ou `user_id` est obligatoire.")
+
+        # ✅ Vérifier et stocker `place_id`
+        if place and isinstance(place, Place):
+            self.place = place
+            self.place_id = place.id
+        elif place_id:
+            self.place = None
+            self.place_id = place_id
+        else:
+            raise ValueError("Un `place` ou `place_id` est obligatoire.")
+
+        # ✅ Vérifier `text`
         self.text = text.strip() if text and text.strip() else "No review provided"
 
-        # ✅ Ensure rating is between 1 and 5
+        # ✅ Vérifier que `rating` est bien entre 1 et 5
         self.rating = max(1, min(5, rating))
 
-        # ✅ Ensure place is a valid instance of Place
-        if isinstance(place, Place):
-            self.place = place
-            self.place_id = place.id  # Stocke l'ID du lieu
-        else:
-            raise ValueError("Invalid place reference.")
-
-        # ✅ Ensure user is a valid instance of User
-        if isinstance(user, User):
-            self.user = user
-            self.user_id = user.id  # Stocke l'ID de l'utilisateur
-        else:
-            raise ValueError("Invalid user reference.")
-
     def save(self):
-        """Update the updated_at timestamp whenever the object is modified"""
+        '''
+        Update the updated_at timestamp whenever the object is modified
+        '''
         self.updated_at = datetime.now()
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "text": self.text,
+            "rating": self.rating,
+            "user_id": self.user_id,
+            "place_id": self.place_id,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }
+
