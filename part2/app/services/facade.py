@@ -4,7 +4,8 @@ from app.models.amenity import Amenity  # Assure-toi d'importer la classe Amenit
 from app.models.place import Place  # Assure-toi d'importer la classe Place correctement
 from datetime import datetime
 from app.models.review import Review
-
+from typing import Dict, Tuple, Union
+from flask import jsonify
 
 class HBnBFacade:
     def __init__(self):
@@ -179,33 +180,49 @@ class HBnBFacade:
         return self.owner_repo.get_by_place_id(place_id)  # Exemple
 
 ########################################## REVVIEEUWWWWWWWWWWWWWWWWWWWWWWWW ##########################################################
-    def create_review(self, review_data):
-        print(f"DEBUG: Checking User ID {review_data['user_id']}, Place ID {review_data['place_id']}")
+    def create_review(self, review_data: Dict[str, Union[str, int]]) -> Tuple[Dict, int]:
+        """
+        Crée un avis pour un utilisateur et un lieu.
 
-        user = self.get_user(review_data['user_id'])
-        place = self.get_place(review_data['place_id'])
+        :param review_data: Un dictionnaire contenant 'user_id', 'place_id', 'text', et 'rating'.
+        :return: Un tuple contenant les données de l'avis en dictionnaire et un code HTTP.
+        """
+        print(f"DEBUG: Vérification de l'utilisateur ID {review_data.get('user_id')}, Place ID {review_data.get('place_id')}")
 
-        if not user:
-            print(f"ERROR: User with ID {review_data['user_id']} not found.")
-            return {"error": f"Utilisateur avec ID {review_data['user_id']} introuvable"}, 404  # ✅ Retour JSON
-        if not place:
-            print(f"ERROR: Place with ID {review_data['place_id']} not found.")
-            return {"error": f"Lieu avec ID {review_data['place_id']} introuvable"}, 404  # ✅ Retour JSON
+        try:
+            # Vérifier si l'utilisateur et le lieu existent
+            user = self.get_user(review_data.get('user_id'))
+            place = self.get_place(review_data.get('place_id'))
 
-        review = Review(
-            text=review_data['text'],
-            rating=review_data['rating'],
-            user=user,
-            place=place
-        )
+            if not user:
+                print(f"ERROR: Utilisateur avec ID {review_data.get('user_id')} non trouvé.")
+                return {"error": f"Utilisateur avec ID {review_data.get('user_id')} introuvable"}, 404
+            
+            if not place:
+                print(f"ERROR: Lieu avec ID {review_data.get('place_id')} non trouvé.")
+                return {"error": f"Lieu avec ID {review_data.get('place_id')} introuvable"}, 404
 
-        print(f"DEBUG: Review object created -> {review.to_dict()}")
+            # Créer l'avis
+            review = Review(
+                text=review_data['text'],
+                rating=review_data['rating'],
+                user=user,
+                place=place
+            )
 
-        self.review_repo.add(review)  # ✅ Ajout dans le repository
-        self.review_repo.save()
-        print(f"DEBUG: Review added to repository with ID {review.id}")
+            print(f"DEBUG: Objet Review créé -> {review.to_dict()}")
 
-        return review,201
+            # Ajouter à la base de données
+            self.review_repo.add(review)
+            self.review_repo.save()
+            print(f"DEBUG: Review ajouté à la base avec ID {review.id}")
+
+            # Retourner les données de l'avis sous forme de dictionnaire
+            return review.to_dict(), 201  
+
+        except Exception as e:
+            print(f"ERROR: Échec de la création de l'avis - {str(e)}")
+            return {"error": "Une erreur est survenue lors de la création de l'avis."}, 500  # ✅ Pas de jsonify ici !
 
 
 
