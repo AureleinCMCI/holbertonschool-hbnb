@@ -4,6 +4,7 @@ from app.models.amenity import Amenity  # Assure-toi d'importer la classe Amenit
 from app.models.place import Place  # Assure-toi d'importer la classe Place correctement
 from datetime import datetime
 from app.models.review import Review
+from werkzeug.security import generate_password_hash
 
 
 class HBnBFacade:
@@ -16,38 +17,70 @@ class HBnBFacade:
 ########################################################################### crud :USER ##################################################################################
 
 
+    def hash_password(self, password):
+        return generate_password_hash(password)
+
     def create_user(self, user_data):
-        user = User(**user_data)
+        hashed_password = generate_password_hash(user_data['password'])
+        user = User(
+            first_name=user_data['first_name'],
+            last_name=user_data['last_name'],
+            email=user_data['email'],
+            password=hashed_password
+        )
         self.user_repository.add(user)
+        return user
+
+    def get_user_by_email(self, email):
+        return self.user_repository.get_by_attribute('email', email)
+
+    def get_all_users(self):
+        return self.user_repository.get_all()
+
+    def update_user(self, user_id, user_data):
+        user = self.user_repository.get(user_id)
+        if not user:
+            return None
+
+        user.first_name = user_data.get('first_name', user.first_name)
+        user.last_name = user_data.get('last_name', user.last_name)
+        user.email = user_data.get('email', user.email)
+
+        # Gérer la mise à jour optionnelle du mot de passe avec hashage sécurisé
+        if 'password' in user_data:
+            user.password = generate_password_hash(user_data['password'])
+
+        self.user_repository.update(user.id, user)
         return user
 
     def get_user_by_id(self, user_id):
         return self.user_repository.get(user_id)
 
-    def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
-    
     def get_all_users(self):
         return self.user_repository.get_all()
-    
+
     def update_user(self, user_id, user_data):
-        # Récupérer l'utilisateur à partir de l'ID
-        user = self.user_repo.get(user_id)
-        
-        # Si l'utilisateur n'existe pas, retourner None
+        user = self.user_repository.get(user_id)
+
         if not user:
             return None
-        
-        # Mettre à jour les champs de l'utilisateur en fonction des données reçues
+
         user.first_name = user_data.get('first_name', user.first_name)
         user.last_name = user_data.get('last_name', user.last_name)
         user.email = user_data.get('email', user.email)
-        
-        # Si tu utilises une base de données ou un autre système de persistance, il te faut enregistrer la modification.
-        # Ici, si tu utilises un stockage en mémoire, la mise à jour est implicite, mais si tu as besoin d'un `commit` dans la BD, tu l'ajoutes ici.
-        
-        # Retourner l'utilisateur mis à jour
+
+        if 'password' in user_data:
+            user.password = generate_password_hash(user_data['password'])
+
+        self.user_repository.update(user_id, user)
         return user
+
+    def get_user_by_id(self, user_id):
+        return self.user_repository.get(user_id)
+
+    def get_all_users(self):
+        return self.user_repository.get_all()
+
 
 ############################################### ici on gére le crud de amenity################################################################################################
     def create_amenity(self, amenity_data):

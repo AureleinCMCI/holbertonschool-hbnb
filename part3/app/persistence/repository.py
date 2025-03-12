@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from app import db  # Assuming you have set up SQLAlchemy in your Flask app
+from flask_sqlalchemy import SQLAlchemy
+from flask import current_app
+
 
 class Repository(ABC):
     @abstractmethod
@@ -76,13 +78,45 @@ class InMemoryRepository(Repository):
     def get_reviews_by_place_id(self, place_id):
         """Récupère tous les avis pour un lieu spécifique"""
         return [review for review in self._storage.values() if str(review.place_id) == str(place_id)]
+from abc import ABC, abstractmethod
+from flask_sqlalchemy import SQLAlchemy
+from flask import current_app
+
+class Repository(ABC):
+    @abstractmethod
+    def add(self, obj):
+        pass
+
+    @abstractmethod
+    def get(self, obj_id):
+        pass
+
+    @abstractmethod
+    def get_all(self):
+        pass
+
+    @abstractmethod
+    def update(self, obj_id, data):
+        pass
+
+    @abstractmethod
+    def delete(self, obj_id):
+        pass
+
+    @abstractmethod
+    def get_by_attribute(self, attr_name, attr_value):
+        pass
+
+# ✅ Utilisation différée de `db`
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
         self.model = model
 
     def add(self, obj):
-        db.session.add(obj)
-        db.session.commit()
+        with current_app.app_context():
+            from app import db  # Import différé pour éviter la boucle
+            db.session.add(obj)
+            db.session.commit()
 
     def get(self, obj_id):
         return self.model.query.get(obj_id)
@@ -91,17 +125,21 @@ class SQLAlchemyRepository(Repository):
         return self.model.query.all()
 
     def update(self, obj_id, data):
-        obj = self.get(obj_id)
-        if obj:
-            for key, value in data.items():
-                setattr(obj, key, value)
-            db.session.commit()
+        with current_app.app_context():
+            from app import db  # Import différé
+            obj = self.get(obj_id)
+            if obj:
+                for key, value in data.items():
+                    setattr(obj, key, value)
+                db.session.commit()
 
     def delete(self, obj_id):
-        obj = self.get(obj_id)
-        if obj:
-            db.session.delete(obj)
-            db.session.commit()
+        with current_app.app_context():
+            from app import db  # Import différé
+            obj = self.get(obj_id)
+            if obj:
+                db.session.delete(obj)
+                db.session.commit()
 
     def get_by_attribute(self, attr_name, attr_value):
         return self.model.query.filter(getattr(self.model, attr_name) == attr_value).first()
