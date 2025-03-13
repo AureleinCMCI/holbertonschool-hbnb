@@ -138,6 +138,7 @@ class PlaceResource(Resource):
         except Exception as e:
             print(f"Error updating place: {e}")
             return {'message': 'Internal Server Error'}, 500
+<<<<<<< HEAD
 @api.route('/<place_id>/reviews')
 class PlaceReviews(Resource):
     @api.response(200, 'Reviews retrieved successfully')
@@ -157,3 +158,5 @@ class PlaceReviews(Resource):
                 'rating': review.rating
             } for review in reviews
         ], 200
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e

@@ -1,10 +1,17 @@
+from app.models.place import Place
+from app.models.review import Review
+from app.models.amenity import Amenity
+from app.models.user import User
 from app.persistence.repository import InMemoryRepository
+<<<<<<< HEAD
 from app.models.user import User
 from app.models.amenity import Amenity  # Assure-toi d'importer la classe Amenity
 from app.models.place import Place  # Assure-toi d'importer la classe Place correctement
 from datetime import datetime
 from app.models.review import Review
 
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
 
 class HBnBFacade:
     def __init__(self):
@@ -12,11 +19,18 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
+<<<<<<< HEAD
         self.owner_repo = InMemoryRepository()
         
 ########################################################################### crud :USER ##################################################################################
 
 
+=======
+
+    #######################################################################
+    # CRUD: USER
+    #######################################################################
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
     def create_user(self, user_data):
         user = User(
             first_name=user_data["first_name"],
@@ -27,40 +41,37 @@ class HBnBFacade:
         print(f"DEBUG: User created -> {user.__dict__}")  # Log pour vérifier
         return user
 
+<<<<<<< HEAD
    
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
-    
+
     def get_all_users(self):
-        return self.user_repo.get_all() 
-    
+        return self.user_repo.get_all()
+
     def update_user(self, user_id, user_data):
-        # Récupérer l'utilisateur à partir de l'ID
         user = self.user_repo.get(user_id)
-        
-        # Si l'utilisateur n'existe pas, retourner None
         if not user:
             return None
-        
-        # Mettre à jour les champs de l'utilisateur en fonction des données reçues
+
         user.first_name = user_data.get('first_name', user.first_name)
         user.last_name = user_data.get('last_name', user.last_name)
         user.email = user_data.get('email', user.email)
         
-        # Si tu utilises une base de données ou un autre système de persistance, il te faut enregistrer la modification.
-        # Ici, si tu utilises un stockage en mémoire, la mise à jour est implicite, mais si tu as besoin d'un `commit` dans la BD, tu l'ajoutes ici.
-        
-        # Retourner l'utilisateur mis à jour
         return user
 
-############################################### ici on gére le crud de amenity################################################################################################
+    #######################################################################
+    # CRUD: AMENITY
+    #######################################################################
     def create_amenity(self, amenity_data):
         amenity = Amenity(
             name=amenity_data['name'],
-            description=amenity_data.get('description', '')  # Gérer la description
+            description=amenity_data.get('description', '')
         )
         self.amenity_repo.add(amenity)
         return amenity
@@ -68,39 +79,29 @@ class HBnBFacade:
     def get_amenity(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
 
-
-    def get_all_amenity(self):
+    def get_all_amenities(self):
         return self.amenity_repo.get_all()
 
-
     def update_amenity(self, amenity_id, amenity_data):
-        # Récupère l'équipement à partir de son ID
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
-            return None  # Si l'équipement n'existe pas, retourne None
+            return None
 
-        # Vérifier si amenity_data est un dictionnaire, sinon le convertir
-        if isinstance(amenity_data, Amenity):
-            amenity_data = amenity_data.__dict__
-
-        if hasattr(amenity_data, 'to_dict'):
-            amenity_data = amenity_data.to_dict()
-
-        # Vérifie et met à jour les attributs
-        if isinstance(amenity_data, dict):  # Assure que c'est bien un dictionnaire
-            if 'name' in amenity_data:
-                amenity.name = amenity_data['name']
-
-            # Enregistre les modifications
-            self.amenity_repo.update(amenity.id, amenity)
+        amenity.name = amenity_data.get('name', amenity.name)
+        amenity.description = amenity_data.get('description', amenity.description)
         
         return amenity
+<<<<<<< HEAD
     
  # Retourne l'équipement mis à jour
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
 
-
-##################################################################CRUD place #############################################################""""""
+    #######################################################################
+    # CRUD: PLACE
+    #######################################################################
     def create_place(self, place_data):
+<<<<<<< HEAD
         """Créer un nouveau lieu en vérifiant l'existence du propriétaire."""
         owner_id = place_data.pop("owner_id", None)  # Supprime owner_id des données
         owner = self.get_user(owner_id) if owner_id else None  # Récupérer l'objet User
@@ -116,13 +117,23 @@ class HBnBFacade:
         )
 
         self.place_repo.add(place)  # Ajouter le lieu au repo
+=======
+        place = Place(
+            title=place_data['title'],
+            description=place_data['description'],
+            price=place_data['price'],
+            latitude=place_data['latitude'],
+            longitude=place_data['longitude'],
+            owner_id=place_data['owner_id'],
+            amenities=place_data['amenities']
+        )
+        self.place_repo.add(place)
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
         return place
 
 
     def get_place(self, place_id):
-
         place = self.place_repo.get(place_id)
-        
         if not place:
             return None
 
@@ -134,11 +145,10 @@ class HBnBFacade:
 
         return place
 
-
     def get_all_places(self):
-        
         return self.place_repo.get_all()
 
+<<<<<<< HEAD
     def update_place(self, place_id, place_data = []):
         # Vérifie si la place existe
         place = self.place_repo.get(place_id)
@@ -208,10 +218,38 @@ class HBnBFacade:
         return review
 
 
+=======
+    def update_place(self, place_id, place_data):
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+
+        place.title = place_data.get('title', place.title)
+        place.description = place_data.get('description', place.description)
+        place.price = place_data.get('price', place.price)
+        place.latitude = place_data.get('latitude', place.latitude)
+        place.longitude = place_data.get('longitude', place.longitude)
+        
+        return place
+
+    #######################################################################
+    # CRUD: REVIEW
+    #######################################################################
+    def create_review(self, review_data):
+        review = Review(
+            text=review_data['text'],
+            user_id=review_data['user_id'],
+            place_id=review_data['place_id']
+        )
+        self.review_repo.add(review)
+        return review
+
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
     def get_review(self, review_id):
         return self.review_repo.get(review_id)
 
     def get_reviews_by_place(self, place_id):
+<<<<<<< HEAD
         print(f"DEBUG: Fetching reviews for place_id {place_id}")  # Log l'ID du lieu
 
         all_reviews = self.review_repo.get_all()
@@ -257,6 +295,18 @@ class HBnBFacade:
         return review  # Retourne l'objet mis à jour
   # Retourne l'objet mis à jour
 
+=======
+        return [review for review in self.review_repo.get_all() if review.place_id == place_id]
+
+    def update_review(self, review_id, review_data):
+        review = self.review_repo.get(review_id)
+        if not review:
+            return None
+
+        review.text = review_data.get('text', review.text)
+        
+        return review
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
@@ -264,6 +314,7 @@ class HBnBFacade:
             self.review_repo.delete(review)
             return True
         return False
+<<<<<<< HEAD
     
 
     
@@ -276,3 +327,20 @@ class HBnBFacade:
         """Add an amenity to the place."""
         if isinstance(amenity, Amenity) and amenity not in self.amenities:
             self.amenities.append(amenity)
+=======
+
+    #######################################################################
+    # HELPER FUNCTIONS
+    #######################################################################
+    def get_owner_of_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if place:
+            return self.user_repo.get(place.owner_id)
+        return None
+
+    def get_amenities_of_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if place:
+            return [self.amenity_repo.get(a_id) for a_id in place.amenities]
+        return []
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e

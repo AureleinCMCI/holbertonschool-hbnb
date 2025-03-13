@@ -1,16 +1,23 @@
 from flask_restx import Namespace, Resource, fields
 from app.services.facade import HBnBFacade
+<<<<<<< HEAD
 from uuid import UUID
 from flask import request, jsonify
 from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
+=======
+
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
 api = Namespace('reviews', description='Review operations')
 facade = HBnBFacade()
 
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
+<<<<<<< HEAD
     'rating': fields.Integer(required=True, description="La note de l'avis (1 à 5)", min=1, max=5),
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
     'user_id': fields.String(required=True, description='ID of the user'),
     'place_id': fields.String(required=True, description='ID of the place')
 })
@@ -21,6 +28,7 @@ class ReviewList(Resource):
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
+<<<<<<< HEAD
         """Créer un nouvel avis (review)"""
         
         review_data = api.payload  # Récupération des données de la requête
@@ -68,6 +76,22 @@ class ReviewList(Resource):
 
 
 
+=======
+        review_data = api.payload
+
+        # Validation des données
+        if not review_data.get('text'):
+            return {'error': 'Text is required'}, 400
+
+        new_review = facade.create_review(review_data)
+        return {
+            'id': new_review.id,
+            'text': new_review.text,
+            'user_id': new_review.user_id,
+            'place_id': new_review.place_id
+        }, 201
+
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
     def get(self):
         reviews = facade.review_repo.get_all()
         if not reviews:
@@ -104,6 +128,7 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     @api.response(500, 'Internal Server Error')
     def put(self, review_id):
+<<<<<<< HEAD
         review_data = api.payload  # JSON reçu de la requête
 
         review = facade.get_review(review_id)  # Récupération de l'avis en base
@@ -122,13 +147,30 @@ class ReviewResource(Resource):
                 review.place_id = review_data['place_id']
 
             # Sauvegarde des modifications
+=======
+        review_data = api.payload
+
+        review = facade.get_review(review_id)
+        if not review:
+            return {'error': 'Review not found'}, 404
+
+        # Validation des données
+        if not review_data.get('text'):
+            return {'error': 'Text is required'}, 400
+
+        try:
+            review.text = review_data.get('text', review.text)
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
             facade.update_review(review_id, review)
 
             return {
                 'message': 'Review updated successfully',
                 'id': review.id,
                 'text': review.text,
+<<<<<<< HEAD
                 'rating': review.rating,
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
                 'user_id': review.user_id,
                 'place_id': review.place_id
             }, 200
@@ -136,8 +178,11 @@ class ReviewResource(Resource):
             print(f"Error updating review: {e}")
             return {'message': 'Internal Server Error'}, 500
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
@@ -146,6 +191,7 @@ class ReviewResource(Resource):
             return {'error': 'Review not found'}, 404
 
         return {'message': 'Review deleted successfully'}, 200
+<<<<<<< HEAD
     
 
     
@@ -169,3 +215,5 @@ class PlaceReviews(Resource):
                 'rating': review.rating
             } for review in reviews
         ], 200
+=======
+>>>>>>> fd2e00e248e8b6f632a25a4ea582b9d4ef730f3e

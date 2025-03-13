@@ -4,50 +4,74 @@ from app.models.amenity import Amenity  # Assure-toi d'importer la classe Amenit
 from app.models.place import Place  # Assure-toi d'importer la classe Place correctement
 from datetime import datetime
 from app.models.review import Review
-
+from sqlalchemy_repository import SQLAlchemyRepository
 
 class HBnBFacade:
-    def __init__(self):
-        self.user_repository = SQLAlchemyRepository(User)  # Switched to SQLAlchemyRepository
-        self.place_repository = SQLAlchemyRepository(Place)
-        self.review_repository = SQLAlchemyRepository(Review)
-        self.amenity_repository = SQLAlchemyRepository(Amenity)
-        
-########################################################################### crud :USER ##################################################################################
+    def __init__(self, session):
+        # Initialiser les repositories pour chaque entité
+        self.user_repository = SQLAlchemyRepository(session)
+        self.place_repository = SQLAlchemyRepository(session)
+        self.review_repository = SQLAlchemyRepository(session)
+        self.amenity_repository = SQLAlchemyRepository(session)
 
+    ###########################################################################
+    # CRUD : Utilisateur
+    ###########################################################################
 
     def create_user(self, user_data):
-        user = User(**user_data)
-        self.user_repository.add(user)
+        """
+        Crée un nouvel utilisateur.
+        """
+        user = User(
+            email=user_data['email'],
+            first_name=user_data.get('first_name'),
+            last_name=user_data.get('last_name')
+        )
+        user.set_password(user_data['password'])  # Hacher le mot de passe
+        self.user_repository.add(user)           # Ajouter l'utilisateur à la session
+        self.user_repository.save()              # Commit les changements
         return user
 
     def get_user_by_id(self, user_id):
-        return self.user_repository.get(user_id)
+        """
+        Récupère un utilisateur par ID.
+        """
+        return self.user_repository.get(User, user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
-    
+        """
+        Récupère un utilisateur par email.
+        """
+        # Ajout d'une méthode pour récupérer un utilisateur par un attribut
+        return self.user_repository.filter_by_attribute(User, 'email', email)
+
     def get_all_users(self):
-        return self.user_repository.get_all()
-    
+        """
+        Récupère tous les utilisateurs.
+        """
+        return self.user_repository.all(User)
+
     def update_user(self, user_id, user_data):
-        # Récupérer l'utilisateur à partir de l'ID
-        user = self.user_repo.get(user_id)
-        
-        # Si l'utilisateur n'existe pas, retourner None
+        """
+        Met à jour les informations d'un utilisateur.
+        """
+        # Récupérer l'utilisateur par ID
+        user = self.user_repository.get(User, user_id)
         if not user:
             return None
-        
-        # Mettre à jour les champs de l'utilisateur en fonction des données reçues
+
+        # Mettre à jour les données de l'utilisateur
         user.first_name = user_data.get('first_name', user.first_name)
         user.last_name = user_data.get('last_name', user.last_name)
         user.email = user_data.get('email', user.email)
         
-        # Si tu utilises une base de données ou un autre système de persistance, il te faut enregistrer la modification.
-        # Ici, si tu utilises un stockage en mémoire, la mise à jour est implicite, mais si tu as besoin d'un `commit` dans la BD, tu l'ajoutes ici.
-        
-        # Retourner l'utilisateur mis à jour
+        if 'password' in user_data:
+            user.set_password(user_data['password'])  # Hacher le nouveau mot de passe
+
+        # Sauvegarder les modifications
+        self.user_repository.save()
         return user
+
 
 ############################################### ici on gére le crud de amenity################################################################################################
     def create_amenity(self, amenity_data):
