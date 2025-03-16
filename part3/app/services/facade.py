@@ -8,10 +8,21 @@ from sqlalchemy_repository import SQLAlchemyRepository
 
 class HBnBFacade:
     def __init__(self, session):
-        # Initialiser les repositories pour chaque entité
+        """
+        Initialise les repositories pour chaque entité en utilisant SQLAlchemy.
+        
+        :param session: Une session SQLAlchemy pour interagir avec la base de données.
+        """
+        # Repository pour les utilisateurs
         self.user_repository = SQLAlchemyRepository(session)
+
+        # Repository pour les lieux (Places)
         self.place_repository = SQLAlchemyRepository(session)
+
+        # Repository pour les avis (Reviews)
         self.review_repository = SQLAlchemyRepository(session)
+
+        # Repository pour les commodités (Amenities)
         self.amenity_repository = SQLAlchemyRepository(session)
 
     ###########################################################################
