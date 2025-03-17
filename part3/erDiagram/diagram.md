@@ -1,4 +1,3 @@
-```mermaid
 erDiagram
     USER {
         int id
