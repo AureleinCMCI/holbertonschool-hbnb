@@ -55,6 +55,7 @@ class UserList(Resource):
             return {'error': 'Email already registered'}, 400
         user_data['password'] = facade.hash_password(user_data['password'])
 
+
         # 🔹 Création de l'utilisateur avec hachage du mot de passe
         new_user = facade.create_user(user_data)
 

@@ -1,4 +1,4 @@
-from app import db, bcrypt
+from app.extensions import db, bcrypt
 import uuid
 from .base_model import BaseModel  # Import BaseModel from its module
 
@@ -14,7 +14,6 @@ class User(BaseModel):
     def hash_password(self, password):
         """Hash the password before storing it."""
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    def verify_password(self, password):
-        """Verify the hashed password."""
-        return bcrypt.check_password_hash(self.password, password)
+    
+   
+    

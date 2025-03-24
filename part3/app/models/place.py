@@ -1,8 +1,11 @@
-from app import db
+
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import validates
 from .base_model import BaseModel
+from app.extensions import db
+
+
 
 place_amenities = db.Table('place_amenities',
     db.Column('place_id', db.String(36), db.ForeignKey('places.id'), primary_key=True),

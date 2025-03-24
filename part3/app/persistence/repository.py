@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app import db  # Assuming you have set up SQLAlchemy in your Flask app
+from app.extensions import db  # Assuming you have set up SQLAlchemy in your Flask app
 
 
 class Repository(ABC):

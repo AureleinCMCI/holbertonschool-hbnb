@@ -4,12 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from app.api.v1.auth import api as auth_ns
-
+from app.extensions import db 
 jwt = JWTManager()
 from config import DevelopmentConfig
 
-# Initialisation des extensions sans les attacher immédiatement à une app
-db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 def create_app(config_class=DevelopmentConfig):

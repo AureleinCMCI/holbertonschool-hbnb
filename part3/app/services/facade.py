@@ -4,8 +4,7 @@ from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
 from datetime import datetime
-from app import db  # ✅ Ajout de db pour initialisation
-import hashlib
+from app.extensions import db , bcrypt# ✅ Ajout de db pour initialisation
 from sqlalchemy.orm.attributes import flag_modified
 
 class HBnBFacade:
@@ -19,9 +18,14 @@ class HBnBFacade:
     # 🧑‍💻 CRUD UTILISATEURS
     ###########################################################################
 
-    def hash_password(self, password: str) -> str:
-        """Hash le mot de passe avec SHA-256"""
-        return hashlib.sha256(password.encode()).hexdigest()
+    def hash_password(self, password):
+        """Génère un hash bcrypt pour stocker en base"""
+        return bcrypt.generate_password_hash(password).decode('utf-8')
+    def verify_password(self, user, password):
+        """Vérifie si le mot de passe correspond au hash stocké"""
+        if not user or not user.password:  # Vérifie si l'utilisateur existe et a un mot de passe
+            return False
+        return bcrypt.check_password_hash(user.password, password)
 
     def create_user(self, user_data):
         user = User(**user_data)
