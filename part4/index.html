@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Places</title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+</head>
+<body>
+    <header>
+         <nav class="navbar">
+            <div class="nav-left">
+              <a href="index.html">
+                <img src="logo.png" alt="App Logo" class="logo">
+              </a>
+              </div>
+              <div class="nav-right">
+                <a href="login.html" id="login-link">Login</a>
+                <a href="place.html" id="plac-lik">Place</a>
+                <a href="add_review.html" id="add-review">Review</a>
+                <a href="cart.html">Panier </a>
+                <a href="mon_compte.html">mon_compte</a>
+                <a href="#" id="logout-link" style="display: none;">Déconnexion</a>
+              </div>
+            </nav>
+    </header>
+    <section id="filters" class="filters-container">
+      <h3>Filtrer par prix</h3>
+      <form id="price-filter-form">
+        <label for="min-price">Prix minimum:</label>
+        <input type="number" id="min-price" name="min-price" placeholder="ex: 5000" />
+    
+        <label for="max-price">Prix maximum:</label>
+        <input type="number" id="max-price" name="max-price" placeholder="ex: 10000" />
+    
+        <button type="submit">Appliquer</button>
+      </form>
+    </section>
+    <main>
+      <section id="places-list">
+        <h2>Available Places</h2>
+        <!-- List of places will be added here dynamically from JS -->
+      </section>
+  
+
+    </main>
+    <footer>
+        © 2025 - Tous droits réservés.
+      </footer>
+      <script src="js/place.js"></script>
+      <script src="js/cart.js"></script>
+      <script src="js/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Review</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="/base_fil/images/logo.png" alt="App Logo" class="logo">
+              </div>
+              <div class="nav-right">
+                <a href="login.html" id="login-link">Login</a>
+                <a href="place.html" id="plac-lik">Place</a>
+                <a href="add_review.html" id="add-review">Review</a>
+              </div>
+            </nav>
+    </header>
+    
+    <main>
+        <!-- Add something to idfentify the place you're reviewing -->
+        <form id="review-form">
+            <h2>Add a Review</h2>
+            <label for="review">Your Review:</label>
+            <textarea id="review" name="review" required></textarea>
+            <label for="rating">Rating:</label>
+            <select id="rating" name="rating" required>
+                <!-- Options for rating -->
+            </select>
+            <button type="submit">Submit Review</button>
+        </form>
+    </main>
+    <footer>
+        © 2025 - Tous droits réservés.
+      </footer>
+    <script src="scripts.js"></script>
+</body>
+</html>

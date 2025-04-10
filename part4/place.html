@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="base_fil/images/logo.png" alt="App Logo" class="logo">
+              </div>
+              <div class="nav-right">
+                <a href="login.html" id="login-link">Login</a>
+                <a href="place.html" id="plac-lik">Place</a>
+                <a href="add_review.html" id="add-review">Review</a>
+              </div>
+            </nav>
+    </header>
+    <main>
+        <!-- Place Details Section -->
+        <section id="place-details">
+            <!-- Dynamic content will be injected here -->
+        </section>
+
+        <!-- Reviews Section -->
+        <section id="reviews">
+            <h2>Reviews</h2>
+            <!-- Reviews will be populated dynamically -->
+        </section>
+
+        <!-- Add Review Section (will appear based on user login) -->
+        <section id="add-review" style="display: none;">
+            <h2>Add a Review</h2>
+            <form id="review-form">
+                <label for="review-text">Review:</label>
+                <textarea id="review-text" name="review-text" required></textarea>
+
+                <label for="rating">Rating (1-5):</label>
+                <input type="number" id="rating" name="rating" min="1" max="5" required>
+
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        © 2025 - Tous droits réservés.
+      </footer>
+    <script src="scripts.js"></script>
+</body>
+
+</html>

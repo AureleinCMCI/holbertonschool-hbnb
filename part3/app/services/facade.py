@@ -3,6 +3,7 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
+from app.models.cart import Cart
 from datetime import datetime
 from app.extensions import db , bcrypt# ✅ Ajout de db pour initialisation
 from sqlalchemy.orm.attributes import flag_modified
@@ -62,6 +63,8 @@ class HBnBFacade:
             return {'error': 'Failed to update user'}, 500
 
         return updated_user
+    def get_user_by_email(self, email):
+        return self.user_repository.get_by_attribute("email", email) 
 
     ###########################################################################
     # 🏠 CRUD LIEUX
@@ -249,3 +252,15 @@ class HBnBFacade:
 
     def delete_amenity(self, amenity_id):
         return self.amenity_repository.delete(amenity_id)
+############################ CARD ##############################################
+    def get_cart_by_user_id(self, user_id):
+        return Cart.query.filter_by(user_id=user_id).first()
+
+    def create_cart(self, user_id, places):
+        cart = Cart(user_id=user_id, places=places)
+        db.session.add(cart)
+        db.session.commit()
+        return cart
+
+    def update_cart(self, cart):
+        db.session.commit()
