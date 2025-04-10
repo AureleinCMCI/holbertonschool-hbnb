@@ -28,36 +28,66 @@ document.addEventListener('DOMContentLoaded', function () {
         alert(`"${place.title}" a été ajouté à votre panier.`);
     }
 
+    function getDynamicImage(index) {
+        // Tableau d'URLs d'images (modifiez selon vos besoins)
+        const imageUrls = [
+            'base_fil/images/maison.jpg',
+            'base_fil/images/icon.png',
+            'base_fil/images/place3.jpg',
+            'base_fil/images/place4.jpg',
+            'base_fil/images/place5.jpg'
+        ];
+        // Retourne une image basée sur l'index
+        return imageUrls[index % imageUrls.length];
+    }
+
     function fetchPlaces() {
         fetch('http://127.0.0.1:5000/api/v1/places/')
             .then(response => response.json())
             .then(places => {
-                placesList.innerHTML = '';
+                placesList.innerHTML = ''; // Vider le contenu de la liste avant de charger les nouveaux lieux
 
-                places.forEach(place => {
-                    const card = document.createElement('article');
-                    card.className = 'place-card';
+                places.forEach((place, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'col-sm';
 
-                    const title = document.createElement('h2');
+                    const cardContainer = document.createElement('div');
+                    cardContainer.className = `card custom-card card-${place.id}`;
+                    card.appendChild(cardContainer);
+
+                    // Créer le couvert de la carte avec une image dynamique
+                    const cardCover = document.createElement('div');
+                    cardCover.className = 'card-cover';
+                    cardCover.style.backgroundImage = `url('${getDynamicImage(index)}')`;
+                    cardContainer.appendChild(cardCover);
+
+                    const title = document.createElement('h5');
+                    title.className = 'card-title';
                     title.textContent = place.title;
+                    cardContainer.appendChild(title);
 
                     const price = document.createElement('p');
+                    price.className = 'card-text';
                     price.textContent = `Prix par nuit : $${place.price}`;
+                    cardContainer.appendChild(price);
 
                     const desc = document.createElement('p');
+                    desc.className = 'card-text';
                     desc.textContent = `Description : ${place.description}`;
+                    cardContainer.appendChild(desc);
 
                     const button = document.createElement('button');
-                    button.textContent = 'Ajouter au panier';
                     button.className = 'choose-button';
+                    button.textContent = 'Ajouter au panier';
                     button.addEventListener('click', () => addToCart(place));
+                    cardContainer.appendChild(button);
 
-                    card.appendChild(title);
-                    card.appendChild(price);
-                    card.appendChild(desc);
-                    card.appendChild(button);
+                    const placeLink = document.createElement('a');
+                    placeLink.href = `place.html?placeId=${place.id}`;
+                    placeLink.className = 'place-link';
+                    placeLink.appendChild(cardContainer);
 
-                    placesList.appendChild(card);
+                    placesList.appendChild(placeLink);
                 });
             })
             .catch(err => {
