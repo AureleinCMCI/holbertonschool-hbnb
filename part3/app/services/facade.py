@@ -178,14 +178,24 @@ class HBnBFacade:
         return self.review_repository.get(review_id)
 
     def get_reviews_by_place(self, place_id):
+        """
+        Récupère toutes les reviews associées à un lieu spécifique.
+        Assure que le résultat est toujours une liste.
+        """
+        # Récupérer les reviews via le repository
         reviews = self.review_repository.get_by_attribute('place_id', place_id)
-
-        # ✅ Assurer que reviews est bien une liste
-        if not isinstance(reviews, list):
-            print(f"❌ ERROR: Expected list but got {type(reviews)}")
-            return [reviews] if reviews else []  # 🔥 Convertir en liste si un seul objet
-
-        return reviews
+        
+        # Gérer tous les cas possibles
+        if reviews is None:
+            # Aucun résultat trouvé
+            return []
+        elif isinstance(reviews, list):
+            # Déjà une liste, parfait
+            return reviews
+        else:
+            # Un seul objet Review, convertir en liste
+            print(f"DEBUG: Converting single review to list for place_id: {place_id}")
+        return [reviews]
 
     def update_review(self, review_id, review_data):
         review = self.review_repository.get(review_id)

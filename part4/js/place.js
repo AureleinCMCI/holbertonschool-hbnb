@@ -16,24 +16,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function addToCart(place) {
-        const userId = getUserIdFromSession();
-        if (!userId) {
-            alert("Veuillez vous connecter pour ajouter au panier.");
-            return;
-        }
-
-        cart.push(place);
-        localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
-        alert(`"${place.title}" a été ajouté à votre panier.`);
-    }
-
     function getDynamicImage(index) {
         // Tableau d'URLs d'images (modifiez selon vos besoins)
         const imageUrls = [
             'base_fil/images/maison.jpg',
-            'base_fil/images/icon.png',
-            'base_fil/images/place3.jpg',
+            'base_fil/images/vila.avif',
+            'base_fil/images/maison.jpg',
             'base_fil/images/place4.jpg',
             'base_fil/images/place5.jpg'
         ];
@@ -78,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const button = document.createElement('button');
                     button.className = 'choose-button';
-                    button.textContent = 'Ajouter au panier';
+                    button.textContent = 'Voir les details';
                     button.addEventListener('click', () => addToCart(place));
                     cardContainer.appendChild(button);
 
